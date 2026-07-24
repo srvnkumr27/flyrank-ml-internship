@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Machine Learning-Based Content Refresh Opportunity Scoring Using Search Intelligence Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="shell">
+
+  <nav class="rail" aria-label="Table of contents">
+    <div class="rail-eyebrow">Contents</div>
+    <ol>
+      <li><a href="#abstract" class="active"><span class="num">01</span> Abstract</a></li>
+      <li><a href="#intro"><span class="num">02</span> Introduction</a></li>
+      <li><a href="#data"><span class="num">03</span> Data</a></li>
+      <li><a href="#methodology"><span class="num">04</span> Methodology</a></li>
+      <li><a href="#results"><span class="num">05</span> Results</a></li>
+      <li><a href="#charts"><span class="num">06</span> Charts</a></li>
+      <li><a href="#limitations"><span class="num">07</span> Limitations</a></li>
+      <li><a href="#recommendations"><span class="num">08</span> Recommendations</a></li>
+      <li><a href="#reproducibility"><span class="num">09</span> Reproducibility</a></li>
+      <li><a href="#credit"><span class="num">10</span> Acknowledgments</a></li>
+    </ol>
+  </nav>
+
+  <main class="paper">
+
+    <div class="masthead">
+      <div class="lane-stamp">● Refresh / Content Opportunity Scoring</div>
+      <h1 class="title">Machine Learning-Based Content Refresh Opportunity Scoring Using Search Intelligence Signals</h1>
+      <div class="byline-block">
+        <div class="name">M SRAVAN KUMAR VARMA</div>
+        <div>FlyRank ML Internship</div>
+        <div>24 July 2026</div>
+      </div>
+    </div>
+
+    <!-- ============ 01 ABSTRACT ============ -->
+    <section id="abstract">
+      <div class="section-head"><span class="section-num">01</span><h2>Abstract</h2></div>
+      <div class="abstract-block">
+        <p class="lede" style="margin-bottom:0;">
+          Organizations managing large websites often struggle to determine which content should be refreshed first to maintain search performance. This study proposes a machine learning–based content refresh opportunity scoring framework using the FlyRank ML Internship dataset. Historical search performance, website engagement, and traffic source metrics were transformed into engineered features and evaluated using supervised machine learning models with time-aware validation to avoid data leakage. The proposed framework ranks content based on its predicted refresh priority and provides interpretable reason codes for each recommendation. The resulting decision-support system enables data-driven prioritization of content updates while maintaining reproducible and privacy-safe research practices.
+        </p>
+      </div>
+    </section>
+
+    <!-- ============ 02 INTRODUCTION ============ -->
+    <section id="intro">
+      <div class="section-head"><span class="section-num">02</span><h2>Introduction</h2></div>
+      <p>
+        Search visibility is one of the primary drivers of organic website traffic. As websites grow to hundreds or thousands of pages, manually reviewing every page becomes impractical. Pages that once performed well may gradually lose visibility because of outdated information, changing search intent, or increased competition.
+      </p>
+      <p>
+        The objective of this research is to develop a repeatable machine learning framework that identifies content requiring review before significant performance loss occurs. Instead of attempting to explain search engine algorithms or establish causal relationships, this work provides observational evidence from historical search and engagement data to support content refresh decisions.
+      </p>
+      <p><strong>Research question:</strong></p>
+      <div class="abstract-block" style="border-left-color: var(--ink-soft);">
+        <p class="lede" style="margin-bottom:0; font-size: 17px;">Can historical search performance and engagement signals be used to identify and rank webpages that should be prioritized for content refresh?</p>
+      </div>
+    </section>
+
+    <!-- ============ 03 DATA ============ -->
+    <section id="data">
+      <div class="section-head"><span class="section-num">03</span><h2>Data</h2></div>
+      <p>This research uses the <strong>FlyRank ML Internship dataset</strong> hosted on Hugging Face. Analysis was performed on aggregated daily content performance records while complying with all public sharing requirements.</p>
+
+      <h4>Data source</h4>
+      <ul>
+        <li>FlyRank ML Internship Dataset</li>
+        <li>Daily content performance warehouse</li>
+        <li>Public-safe aggregated metrics only</li>
+      </ul>
+
+      <h4>Primary table</h4>
+      <p><code class="inline">fact_content_daily_performance</code></p>
+
+      <h4>Key variables</h4>
+      <div class="var-grid">
+        <div>
+          <h3>Search Performance</h3>
+          <ul>
+            <li>Google Search Console Impressions</li>
+            <li>Google Search Console Clicks</li>
+            <li>Average Search Position</li>
+          </ul>
+          <h3>Website Engagement</h3>
+          <ul>
+            <li>Pageviews</li>
+            <li>Sessions</li>
+            <li>Users</li>
+            <li>Engaged Sessions</li>
+            <li>Total Engagement Time</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Traffic Sources</h3>
+          <ul>
+            <li>Organic Sessions</li>
+            <li>Direct Sessions</li>
+            <li>Referral Sessions</li>
+            <li>Social Sessions</li>
+            <li>Paid Sessions</li>
+            <li>AI Sessions</li>
+          </ul>
+          <h3>AI Referral Breakdown</h3>
+          <ul>
+            <li>ChatGPT</li>
+            <li>Perplexity</li>
+            <li>Gemini</li>
+            <li>Claude</li>
+            <li>Copilot</li>
+            <li>Meta AI</li>
+            <li>Other AI Sources</li>
+          </ul>
+        </div>
+      </div>
+      <h3>Time Features</h3>
+      <ul>
+        <li>Report Date</li>
+        <li>Month</li>
+      </ul>
+
+      <div class="callout">
+        <div class="label">Excluded information — FlyRank public data policy</div>
+        <p style="margin-bottom:0;">To comply with FlyRank's public data policy, the following fields were not published or exposed: client identifiers, content identifiers, domains, URLs, search queries, raw warehouse exports, and credentials.</p>
+      </div>
+    </section>
+
+    <!-- ============ 04 METHODOLOGY ============ -->
+    <section id="methodology">
+      <div class="section-head"><span class="section-num">04</span><h2>Methodology</h2></div>
+
+      <h3>Research design</h3>
+      <p>The project follows a supervised machine learning workflow for content refresh opportunity scoring. The overall workflow consists of:</p>
+      <ol class="workflow">
+        <li>Data extraction using DuckDB over the FlyRank warehouse</li>
+        <li>Data cleaning and preprocessing</li>
+        <li>Feature engineering</li>
+        <li>Target label creation</li>
+        <li>Model training</li>
+        <li>Model evaluation</li>
+        <li>Ranked recommendation generation</li>
+      </ol>
+
+      <h3>Feature engineering</h3>
+      <p>Several derived features were created from historical search performance. These engineered variables capture both historical performance and temporal behavior rather than relying solely on raw metrics. Examples include:</p>
+      <ul>
+        <li>Click-through Rate (CTR)</li>
+        <li>Engagement Rate</li>
+        <li>Average Engagement Time</li>
+        <li>Organic Traffic Share</li>
+        <li>AI Traffic Share</li>
+        <li>Click Trend</li>
+        <li>Impression Trend</li>
+        <li>Position Trend</li>
+        <li>Session Growth Rate</li>
+        <li>Rolling Moving Averages</li>
+        <li>Performance Volatility</li>
+      </ul>
+
+      <h3>Target definition</h3>
+      <p>A refresh opportunity label was created using future performance windows. Content experiencing sustained declines in search performance over the evaluation window was labeled as requiring review. The target definition was designed using future observations to reduce information leakage between training and evaluation periods.</p>
+
+      <div class="signal-legend">
+        <div class="signal-item"><span class="dot growing"></span> Growing</div>
+        <div class="signal-item"><span class="dot declining"></span> Declining</div>
+        <div class="signal-item"><span class="dot recovering"></span> Recovering</div>
+        <div class="signal-item"><span class="dot monitor"></span> Stable / Monitor</div>
+      </div>
+
+      <h3>Baseline model</h3>
+      <p>The baseline model used Logistic Regression because of its interpretability and strong performance on structured tabular data.</p>
+
+      <h3>Candidate models</h3>
+      <ul>
+        <li>Logistic Regression</li>
+        <li>Random Forest</li>
+        <li>LightGBM</li>
+      </ul>
+
+      <h3>Validation strategy</h3>
+      <p>A time-aware train/validation/test split was used to preserve temporal order and reduce data leakage. Model performance was evaluated on future observations rather than randomly shuffled samples. Evaluation metrics included:</p>
+      <ul>
+        <li>Precision</li>
+        <li>Recall</li>
+        <li>F1 Score</li>
+        <li>ROC-AUC (where applicable)</li>
+      </ul>
+    </section>
+
+    <!-- ============ 05 RESULTS ============ -->
+    <section id="results">
+      <div class="section-head"><span class="section-num">05</span><h2>Results</h2></div>
+      <p>The machine learning models were evaluated using identical validation datasets. The baseline Logistic Regression model established a reference point for comparison. Tree-based ensemble methods demonstrated improved predictive performance by capturing nonlinear relationships among search and engagement signals.</p>
+      <p>Feature importance analysis indicated that historical click trends, impression trends, engagement metrics, and average search position contributed most strongly to refresh opportunity predictions.</p>
+      <p>The proposed scoring framework successfully ranked content according to predicted refresh priority, allowing pages to be grouped into actionable review categories.</p>
+
+      <table>
+        <thead><tr><th>Model</th><th>Precision</th><th>Recall</th><th>F1</th><th>ROC-AUC</th></tr></thead>
+        <tbody>
+          <tr><td>Logistic Regression <span class="placeholder">(baseline)</span></td><td class="placeholder">0.XX</td><td class="placeholder">0.XX</td><td class="placeholder">0.XX</td><td class="placeholder">0.XX</td></tr>
+          <tr><td>Random Forest</td><td class="placeholder">0.XX</td><td class="placeholder">0.XX</td><td class="placeholder">0.XX</td><td class="placeholder">0.XX</td></tr>
+          <tr class="best-model"><td>LightGBM <span class="placeholder" style="margin-left:6px;">best</span></td><td class="placeholder">0.XX</td><td class="placeholder">0.XX</td><td class="placeholder">0.XX</td><td class="placeholder">0.XX</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout pending">
+        <div class="label">Pending — fill after model training</div>
+        <p style="margin-bottom:0;">Replace this table and the narrative above with actual metrics, comparison numbers, and confirmation of which model won, once <code class="inline">work/capstone.ipynb</code> is complete.</p>
+      </div>
+    </section>
+
+    <!-- ============ 06 CHARTS ============ -->
+    <section id="charts">
+      <div class="section-head"><span class="section-num">06</span><h2>Charts</h2></div>
+      <p>Generated directly from <code class="inline">work/capstone.ipynb</code>.</p>
+
+      <div class="chart-grid">
+        <div class="chart-frame">
+          <img src="assets/feature_importance.png" alt="Feature Importance" onerror="this.parentElement.innerHTML='<div class=&quot;placeholder&quot;>assets/feature_importance.png — not yet added</div>'">
+          <div class="chart-caption">Fig. 1 — Feature importance</div>
+        </div>
+        <div class="chart-frame">
+          <img src="assets/confusion_matrix.png" alt="Confusion Matrix" onerror="this.parentElement.innerHTML='<div class=&quot;placeholder&quot;>assets/confusion_matrix.png — not yet added</div>'">
+          <div class="chart-caption">Fig. 2 — Confusion matrix</div>
+        </div>
+        <div class="chart-frame">
+          <img src="assets/roc_curve.png" alt="ROC Curve" onerror="this.parentElement.innerHTML='<div class=&quot;placeholder&quot;>assets/roc_curve.png — not yet added</div>'">
+          <div class="chart-caption">Fig. 3 — ROC curve</div>
+        </div>
+        <div class="chart-frame">
+          <img src="assets/precision_recall_curve.png" alt="Precision-Recall Curve" onerror="this.parentElement.innerHTML='<div class=&quot;placeholder&quot;>assets/precision_recall_curve.png — not yet added</div>'">
+          <div class="chart-caption">Fig. 4 — Precision–recall curve</div>
+        </div>
+        <div class="chart-frame">
+          <img src="assets/ctr_distribution.png" alt="CTR Distribution" onerror="this.parentElement.innerHTML='<div class=&quot;placeholder&quot;>assets/ctr_distribution.png — not yet added</div>'">
+          <div class="chart-caption">Fig. 5 — CTR distribution</div>
+        </div>
+        <div class="chart-frame">
+          <img src="assets/search_trend_over_time.png" alt="Search Trend Over Time" onerror="this.parentElement.innerHTML='<div class=&quot;placeholder&quot;>assets/search_trend_over_time.png — not yet added</div>'">
+          <div class="chart-caption">Fig. 6 — Search trend over time</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 07 LIMITATIONS ============ -->
+    <section id="limitations">
+      <div class="section-head"><span class="section-num">07</span><h2>Limitations</h2></div>
+      <div class="callout">
+        <div class="label">Read this as observed / directional, not causal</div>
+        <p style="margin-bottom:0;">This research has several limitations, listed below.</p>
+      </div>
+      <ul>
+        <li>The findings are observational and should not be interpreted as causal relationships.</li>
+        <li>Search engine ranking systems are influenced by many external factors that are not captured within the available dataset.</li>
+        <li>Labels are generated using predefined business rules rather than manual editorial review.</li>
+        <li>Model performance depends on the available historical data and may vary across websites and industries.</li>
+        <li>Recommendations should support human decision-making rather than replace editorial judgment.</li>
+      </ul>
+    </section>
+
+    <!-- ============ 08 RECOMMENDATIONS ============ -->
+    <section id="recommendations">
+      <div class="section-head"><span class="section-num">08</span><h2>Ranked Recommendations</h2></div>
+      <p>The proposed framework generates a prioritized action list for content review. Each recommendation is accompanied by evidence-based reason codes generated from the underlying search and engagement signals.</p>
+
+      <table>
+        <thead><tr><th>Priority</th><th>Recommendation</th><th>Reason Code</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="priority-badge high">High</span></td>
+            <td>Refresh content immediately</td>
+            <td>Declining clicks, declining impressions, worsening average position</td>
+          </tr>
+          <tr>
+            <td><span class="priority-badge high">High</span></td>
+            <td>Update titles and metadata</td>
+            <td>High impressions with low click-through rate</td>
+          </tr>
+          <tr>
+            <td><span class="priority-badge medium">Medium</span></td>
+            <td>Improve internal linking</td>
+            <td>Stable visibility with decreasing engagement</td>
+          </tr>
+          <tr>
+            <td><span class="priority-badge medium">Medium</span></td>
+            <td>Expand or revise content</td>
+            <td>Organic sessions decreasing while impressions remain stable</td>
+          </tr>
+          <tr>
+            <td><span class="priority-badge low">Low</span></td>
+            <td>Continue monitoring</td>
+            <td>Stable search performance and engagement</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============ 09 REPRODUCIBILITY ============ -->
+    <section id="reproducibility">
+      <div class="section-head"><span class="section-num">09</span><h2>Reproducibility</h2></div>
+
+      <h4>Repository structure</h4>
+      <ul>
+        <li><code class="inline">work/</code> — Assignment notebooks and capstone notebook</li>
+        <li><code class="inline">paper/</code> — Public research paper</li>
+        <li><code class="inline">submission/paper_url.txt</code> — Deployed paper URL</li>
+      </ul>
+      <p>The complete source code, feature engineering pipeline, notebooks, and documentation are available in the accompanying GitHub repository: <a href="https://github.com/srvnkumr27/flyrank-ml-internship" target="_blank" rel="noopener">github.com/srvnkumr27/flyrank-ml-internship</a></p>
+
+      <h4>Experiments were conducted using</h4>
+      <ul>
+        <li>Python</li>
+        <li>DuckDB</li>
+        <li>Pandas</li>
+        <li>Scikit-learn</li>
+        <li>LightGBM</li>
+        <li>Matplotlib</li>
+      </ul>
+      <p>The workflow is fully reproducible using the FlyRank ML Internship dataset with the appropriate Hugging Face read access.</p>
+    </section>
+
+    <!-- ============ 10 ACKNOWLEDGMENTS ============ -->
+    <section id="credit">
+      <div class="section-head"><span class="section-num">10</span><h2>Acknowledgments</h2></div>
+      <p>This research was completed as part of the <strong>FlyRank Machine Learning Internship</strong>.</p>
+      <p>The project was built using the <a href="https://flyrank.ai" target="_blank" rel="noopener">FlyRank ML Internship dataset</a> and follows the internship's public data sharing guidelines by excluding all private identifiers, domains, URLs, and raw search queries.</p>
+      <p>The author gratefully acknowledges FlyRank for providing access to the search intelligence warehouse and enabling hands-on research using real-world search performance data.</p>
+    </section>
+
+    <footer>
+      <p>M Sravan Kumar Varma · <span class="placeholder">[email or portfolio link, optional]</span></p>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  const sections = document.querySelectorAll('main section');
+  const links = document.querySelectorAll('.rail a');
+  const setActive = () => {
+    let current = sections[0]?.id;
+    const scrollPos = window.scrollY + 120;
+    sections.forEach(sec => { if (sec.offsetTop <= scrollPos) current = sec.id; });
+    links.forEach(link => { link.classList.toggle('active', link.getAttribute('href') === '#' + current); });
+  };
+  window.addEventListener('scroll', setActive, { passive: true });
+  setActive();
+</script>
+
+</body>
+</html>
