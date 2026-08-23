@@ -8,3 +8,4 @@ PASTE-YOUR-DEPLOYED-PAPER-URL-HERE
 | `notebooks/w04_signal_audit.ipynb` | ML-06 | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w04_signal_audit.ipynb) | ☑ |
 | `notebooks/w04_baseline_score.ipynb` | ML-07 | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w04_baseline_score.ipynb) | ☑ |
 https://colab.research.google.com/github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w05_model.ipynb | ☑ |
+the paper lives at your deployed URL|https://srvnkumr27.github.io/flyrank-ml-internship/
