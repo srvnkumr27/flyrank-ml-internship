@@ -29,10 +29,16 @@ jobs:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
 
+      - name: Prepare Pages artifact
+        run: |
+          rm -rf site
+          mkdir -p site/paper
+          cp -R paper/. site/paper/
+
       - name: Upload paper
         uses: actions/upload-pages-artifact@v4
         with:
-          path: "./paper"
+          path: "./site"
 
       - name: Deploy paper
         id: deployment
