@@ -7,151 +7,34 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<header>
-<div class="container">
+<header><div class="container">
 <p class="eyebrow">FLYRANK ML INTERNSHIP · RESEARCH ARTIFACT</p>
 <h1>Predicting Next-Day Search Clicks for Content Refresh Prioritization</h1>
 <p class="lead">A time-aware machine-learning study using anonymized search-performance data to investigate whether recent signals can support a ranked content-review queue.</p>
 <p class="tags">March 2026 · 3.43M processed observations · Regression · Decision support</p>
-</div>
-</header>
-
-<nav><div class="container">
-<a href="#abstract">Abstract</a>
-<a href="#problem">Problem</a>
-<a href="#data">Data</a>
-<a href="#method">Method</a>
-<a href="#results">Results</a>
-<a href="#limits">Limitations</a>
-<a href="#actions">Recommendations</a>
-<a href="#repro">Reproducibility</a>
-</div></nav>
-
+</div></header>
+<nav><div class="container"><a href="#abstract">Abstract</a><a href="#problem">Problem</a><a href="#data">Data</a><a href="#method">Method</a><a href="#results">Results</a><a href="#limits">Limitations</a><a href="#actions">Recommendations</a><a href="#repro">Reproducibility</a></div></nav>
 <main class="container">
-
-<section id="abstract">
-<h2>01 · Abstract</h2>
-<div class="abstract">
-<p>This study asks whether recent search-performance signals can estimate a page's next-day clicks well enough to support a ranked content-refresh queue. Using a processed March 2026 panel derived from the FlyRank internship search-data release, I constructed seven-day historical features for clicks, impressions, ranking position and CTR, together with a calendar feature. I compared a transparent seven-day-average baseline with Decision Tree, Random Forest and Gradient Boosting regression models using a chronological train/validation split and explicit leakage checks. On the March 25–30 validation window, the seven-day-average baseline achieved an RMSE of approximately 0.7904 and outperformed the tested tree-based models, meaning the current ML feature set did not demonstrate an improvement over the simple baseline. The result supports using the current pipeline as decision-support and prioritization infrastructure while avoiding causal claims about whether a content refresh will increase search traffic.</p>
-</div>
-</section>
-
-<section id="problem">
-<h2>02 · Introduction / Problem Statement</h2>
-<p>SEO and content teams may have thousands of pages competing for limited review capacity. The practical question is not simply which pages have traffic, but <strong>which pages should be investigated first</strong>.</p>
-<p>This project turns recent search telemetry into a prediction and prioritization workflow:</p>
-<div class="flow">Search signals → historical features → next-day click estimate → review priority → human decision</div>
+<section id="abstract"><h2>01 · Abstract</h2><div class="abstract">
+<p>FlyRank's content teams face a practical prioritization problem: when a large portfolio of pages cannot all be reviewed at once, which pages should be investigated first? This case study asks whether recent search-performance signals can estimate a page's next-day clicks well enough to support that review queue. Using a processed March 2026 panel derived from the FlyRank internship search-data release, I constructed seven-day historical features for clicks, impressions, ranking position and CTR, together with a calendar feature. I compared a transparent seven-day-average baseline with Decision Tree, Random Forest and Gradient Boosting regression models using a chronological train/validation split and explicit leakage checks. On the March 25–30 validation window, the seven-day-average baseline achieved an RMSE of approximately 0.7904 and outperformed the tested tree-based models. The finding means the current feature set does not demonstrate an ML improvement over the simple baseline, so the resulting system is best used as decision-support infrastructure for content review rather than as an automatic optimizer or causal model of content changes.</p>
+</div></section>
+<section id="problem"><h2>02 · Introduction / FlyRank Case Study</h2>
+<p>The real content problem behind this lane is <strong>review prioritization</strong>. Search and analytics systems can produce a large stream of observations, but a content team has limited time and needs a defensible way to decide what deserves attention first.</p>
+<p>This project therefore does not treat prediction as the end goal. The goal is to turn recent search telemetry into a ranked, explainable workflow that helps a human reviewer decide where to look:</p>
+<div class="flow">Search signals → historical features → next-day click estimate → review priority → human investigation</div>
+<p>The case study is deliberately grounded in the FlyRank content-refresh setting. Signals such as impressions, CTR, ranking position and recent clicks describe observable search performance. They can indicate where a page may deserve investigation, but they do not tell us that a refresh will cause more traffic. The research question is therefore narrower and operational: <strong>can recent signals support a useful prioritization layer for content review?</strong></p>
 <div class="note"><strong>Important:</strong> The system recommends what to investigate. It does not automatically change content or establish that a change will cause additional traffic.</div>
 </section>
-
-<section id="data">
-<h2>03 · Data</h2>
-<div class="stats">
-<div><strong>~79M</strong><span>Rows in broader internship release</span></div>
-<div><strong>3,434,323</strong><span>Processed modeling observations</span></div>
-<div><strong>Mar 1–30</strong><span>2026 modeling window</span></div>
-<div><strong>5</strong><span>Predictive features</span></div>
-</div>
+<section id="data"><h2>03 · Data</h2><div class="stats"><div><strong>~79M</strong><span>Rows in broader internship release</span></div><div><strong>3,434,323</strong><span>Processed modeling observations</span></div><div><strong>Mar 1–30</strong><span>2026 modeling window</span></div><div><strong>5</strong><span>Predictive features</span></div></div>
 <p>The broader FlyRank internship release contains approximately 79 million rows. This paper does <strong>not</strong> claim that the model was trained directly on all 79 million rows. The modeling panel is the processed <code>refresh_feature_vector.csv</code> containing 3,434,323 observations across March 1–30, 2026.</p>
-<table>
-<tr><th>Feature</th><th>Meaning</th></tr>
-<tr><td><code>clicks_7d_avg</code></td><td>Seven-day average clicks</td></tr>
-<tr><td><code>impressions_7d_avg</code></td><td>Seven-day average impressions</td></tr>
-<tr><td><code>position_7d_avg</code></td><td>Seven-day average position</td></tr>
-<tr><td><code>ctr_7d</code></td><td>Seven-day CTR</td></tr>
-<tr><td><code>is_weekend</code></td><td>Weekend indicator</td></tr>
-<tr><td><code>target_next_day_clicks</code></td><td>Next-day clicks</td></tr>
-</table>
-<h3>Public-safe exclusions</h3>
-<p>No client names, domains, page URLs, page titles, keywords, private queries, or identifying content are included. The full warehouse is not committed to the public repository.</p>
+<table><tr><th>Feature</th><th>Meaning</th></tr><tr><td><code>clicks_7d_avg</code></td><td>Seven-day average clicks</td></tr><tr><td><code>impressions_7d_avg</code></td><td>Seven-day average impressions</td></tr><tr><td><code>position_7d_avg</code></td><td>Seven-day average position</td></tr><tr><td><code>ctr_7d</code></td><td>Seven-day CTR</td></tr><tr><td><code>is_weekend</code></td><td>Weekend indicator</td></tr><tr><td><code>target_next_day_clicks</code></td><td>Next-day clicks</td></tr></table>
+<h3>Public-safe exclusions</h3><p>No client names, domains, page URLs, page titles, keywords, private queries, or identifying content are included. The full warehouse is not committed to the public repository.</p>
 </section>
-
-<section id="method">
-<h2>04 · Methodology</h2>
-<h3>Prediction task</h3>
-<p>Regression: estimate <code>target_next_day_clicks</code>.</p>
-<h3>Baseline</h3>
-<pre>prediction = clicks_7d_avg</pre>
-<h3>Models</h3>
-<ul><li>Decision Tree Regressor</li><li>Random Forest Regressor</li><li>Gradient Boosting Regressor</li></ul>
-<h3>Validation</h3>
-<p><strong>Training:</strong> March 1–24, 2026 &nbsp; | &nbsp; <strong>Validation:</strong> March 25–30, 2026</p>
-<p>A chronological split was used instead of a random row split so future observations do not leak into training.</p>
-<h3>Leakage checks</h3>
-<p><code>target_next_day_clicks</code> and the intentionally constructed future feature <code>trap_next_day_impressions</code> were excluded from predictive inputs. Earlier leakage testing showed that future information can produce suspiciously strong performance, confirming the need for strict temporal feature construction.</p>
-</section>
-
-<section id="results">
-<h2>05 · Results</h2>
-<div class="finding"><small>MAIN FINDING</small><h3>The simple baseline wins.</h3>
-<p>None of the tested tree-based ML models improved on the seven-day-average baseline on the held-out March 25–30 validation window.</p></div>
-
-<table>
-<tr><th>Method</th><th>MAE ↓</th><th>RMSE ↓</th><th>R² ↑</th></tr>
-<tr class="best"><td>7-day average baseline</td><td>0.2094</td><td>0.7904</td><td>0.6852</td></tr>
-<tr><td>Decision Tree</td><td>0.2266</td><td>0.8762</td><td>0.6132</td></tr>
-<tr><td>Random Forest</td><td>0.2248</td><td>0.8665</td><td>0.6217</td></tr>
-<tr><td>Gradient Boosting</td><td>0.2251</td><td>0.8217</td><td>0.6597</td></tr>
-</table>
-
-<div class="charts">
-<figure><img src="assets/rmse.png"><figcaption>Validation RMSE — lower is better.</figcaption></figure>
-<figure><img src="assets/r2.png"><figcaption>Validation R² — higher is better.</figcaption></figure>
-</div>
-
-<p>Gradient Boosting is the strongest of the tested ML models, but it still does not beat the historical baseline. Therefore, the current feature set does not justify replacing the simpler predictor.</p>
-</section>
-
-<section id="limits">
-<h2>06 · Limitations & Honest Framing</h2>
-<div class="grid">
-<div><strong>Observational</strong><p>Search behavior is observed; no intervention experiment is run.</p></div>
-<div><strong>Not causal</strong><p>Prediction does not establish that refreshing content causes more clicks.</p></div>
-<div><strong>Not Google prediction</strong><p>The system does not model or reverse-engineer a search ranking algorithm.</p></div>
-<div><strong>Limited window</strong><p>The reported validation covers March 25–30, 2026.</p></div>
-<div><strong>Feature limitations</strong><p>The current feature set focuses mainly on recent search-performance signals.</p></div>
-<div><strong>Baseline strength</strong><p>The simple baseline currently outperforms the tested ML models.</p></div>
-</div>
-</section>
-
-<section id="actions">
-<h2>07 · Ranked Recommendations</h2>
-<p>The W07 action playbook converts observable signals into a review queue. Recommendations are for investigation, not automatic intervention.</p>
-<table>
-<tr><th>Priority signal</th><th>Suggested review</th></tr>
-<tr><td><strong>HIGH_IMPRESSIONS</strong></td><td>Investigate whether search visibility is converting into clicks.</td></tr>
-<tr><td><strong>LOW_CTR</strong></td><td>Review title/snippet alignment and search intent.</td></tr>
-<tr><td><strong>WEAKER_POSITION</strong></td><td>Review relevance, content quality and on-page signals.</td></tr>
-<tr><td><strong>LOW_RECENT_CLICKS</strong></td><td>Monitor the recent trend and investigate possible decline.</td></tr>
-<tr><td><strong>MODEL_PRIORITY</strong></td><td>Send the page for general human review when no specific rule dominates.</td></tr>
-</table>
-</section>
-
-<section id="repro">
-<h2>08 · Reproducibility</h2>
-<p>The work is organized as a sequential notebook pipeline from research framing through action recommendations. The processed feature vector is generated from the approved data release rather than committed to the public repository.</p>
-<div class="links">
-<a href="https://github.com/srvnkumr27/flyrank-ml-internship">Repository</a>
-<a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w01_research_question.ipynb">W01</a>
-<a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w02_ml_task_framing.ipynb">W02</a>
-<a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w03_data_contract.ipynb">W03 Data</a>
-<a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w03_feature_leakage_check.ipynb">W03 Leakage</a>
-<a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w04_baseline_score.ipynb">W04 Baseline</a>
-<a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w04_signal_audit.ipynb">W04 Signal</a>
-<a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w05_model.ipynb">W05</a>
-<a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w06_validation_audit.ipynb">W06</a>
-<a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w07_action_playbook.ipynb">W07</a>
-<a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/capstone.ipynb">Capstone</a>
-</div>
-</section>
-
-<section>
-<h2>09 · Acknowledgments & Data Credit</h2>
-<div class="credit"><strong>Built on the FlyRank ML Internship dataset.</strong><p>Developed as part of the FlyRank ML Internship. Data source: <a href="https://flyrank.ai">FlyRank AI</a>.</p></div>
-</section>
-
+<section id="method"><h2>04 · Methodology</h2><h3>Prediction task</h3><p>Regression: estimate <code>target_next_day_clicks</code>.</p><h3>Baseline</h3><pre>prediction = clicks_7d_avg</pre><h3>Models</h3><ul><li>Decision Tree Regressor</li><li>Random Forest Regressor</li><li>Gradient Boosting Regressor</li></ul><h3>Validation</h3><p><strong>Training:</strong> March 1–24, 2026 &nbsp; | &nbsp; <strong>Validation:</strong> March 25–30, 2026</p><p>A chronological split was used instead of a random row split so future observations do not leak into training.</p><h3>Leakage checks</h3><p><code>target_next_day_clicks</code> and the intentionally constructed future feature <code>trap_next_day_impressions</code> were excluded from predictive inputs. Earlier leakage testing showed that future information can produce suspiciously strong performance, confirming the need for strict temporal feature construction.</p></section>
+<section id="results"><h2>05 · Results</h2><div class="finding"><small>MAIN FINDING</small><h3>The simple baseline wins.</h3><p>None of the tested tree-based ML models improved on the seven-day-average baseline on the held-out March 25–30 validation window.</p></div><table><tr><th>Method</th><th>MAE ↓</th><th>RMSE ↓</th><th>R² ↑</th></tr><tr class="best"><td>7-day average baseline</td><td>0.2094</td><td>0.7904</td><td>0.6852</td></tr><tr><td>Decision Tree</td><td>0.2266</td><td>0.8762</td><td>0.6132</td></tr><tr><td>Random Forest</td><td>0.2248</td><td>0.8665</td><td>0.6217</td></tr><tr><td>Gradient Boosting</td><td>0.2251</td><td>0.8217</td><td>0.6597</td></tr></table><div class="charts"><figure><img src="assets/rmse.png"><figcaption>Validation RMSE — lower is better.</figcaption></figure><figure><img src="assets/r2.png"><figcaption>Validation R² — higher is better.</figcaption></figure></div><p>Gradient Boosting is the strongest of the tested ML models, but it still does not beat the historical baseline. Therefore, the current feature set does not justify replacing the simpler predictor.</p></section>
+<section id="limits"><h2>06 · Limitations & Honest Framing</h2><div class="grid"><div><strong>Observational</strong><p>Search behavior is observed; no intervention experiment is run.</p></div><div><strong>Not causal</strong><p>Prediction does not establish that refreshing content causes more clicks.</p></div><div><strong>Not Google prediction</strong><p>The system does not model or reverse-engineer a search ranking algorithm.</p></div><div><strong>Limited window</strong><p>The reported validation covers March 25–30, 2026.</p></div><div><strong>Feature limitations</strong><p>The current feature set focuses mainly on recent search-performance signals.</p></div><div><strong>Baseline strength</strong><p>The simple baseline currently outperforms the tested ML models.</p></div></div></section>
+<section id="actions"><h2>07 · Ranked Recommendations</h2><p>The W07 action playbook converts observable signals into a review queue. Recommendations are for investigation, not automatic intervention.</p><table><tr><th>Priority signal</th><th>Suggested review</th></tr><tr><td><strong>HIGH_IMPRESSIONS</strong></td><td>Investigate whether search visibility is converting into clicks.</td></tr><tr><td><strong>LOW_CTR</strong></td><td>Review title/snippet alignment and search intent.</td></tr><tr><td><strong>WEAKER_POSITION</strong></td><td>Review relevance, content quality and on-page signals.</td></tr><tr><td><strong>LOW_RECENT_CLICKS</strong></td><td>Monitor the recent trend and investigate possible decline.</td></tr><tr><td><strong>MODEL_PRIORITY</strong></td><td>Send the page for general human review when no specific rule dominates.</td></tr></table></section>
+<section id="repro"><h2>08 · Reproducibility</h2><p>The work is organized as a sequential notebook pipeline from research framing through action recommendations. The processed feature vector is generated from the approved data release rather than committed to the public repository.</p><div class="links"><a href="https://github.com/srvnkumr27/flyrank-ml-internship">Repository</a><a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w01_research_question.ipynb">W01</a><a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w02_ml_task_framing.ipynb">W02</a><a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w03_data_contract.ipynb">W03 Data</a><a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w03_feature_leakage_check.ipynb">W03 Leakage</a><a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w04_baseline_score.ipynb">W04 Baseline</a><a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w04_signal_audit.ipynb">W04 Signal</a><a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w05_model.ipynb">W05</a><a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w06_validation_audit.ipynb">W06</a><a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/w07_action_playbook.ipynb">W07</a><a href="https://github.com/srvnkumr27/flyrank-ml-internship/blob/main/work/notebooks/capstone.ipynb">Capstone</a></div></section>
+<section><h2>09 · Acknowledgments & Data Credit</h2><div class="credit"><strong>Built on the FlyRank ML Internship dataset.</strong><p>Developed as part of the FlyRank ML Internship. Data source: <a href="https://flyrank.ai">FlyRank AI</a>.</p></div></section>
 <footer>FlyRank ML Research Artifact · Public-safe · Predictive and decision-support framing</footer>
-</main>
-</body>
-</html>
+</main></body></html>
